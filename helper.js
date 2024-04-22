@@ -7,6 +7,8 @@ export const isEmpty = (value) => {
   );
 };
 
+export const extractFullUrl = (url, baseUrl) => `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+
 export const queryString = (obj, parentKey = "") => {
   const pairs = [];
   const encode = encodeURIComponent;
