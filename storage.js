@@ -1,13 +1,5 @@
 import { isEmpty } from "./helpers";
 
-export const languageListStorage = SessionStorageBuilder('languageList');
-export const loginStatusStorage = SessionStorageBuilder('LOGIN_STATUS');
-export const previousPageLoadsStorage = SessionStorageBuilder('previous_page_loads');
-export const selectedLanguageStorage = SessionStorageBuilder('selected_Language');
-export const userIdentityStorage = SessionStorageBuilder('cadre-user-identity');
-export const pendoTabIdStorage = SessionStorageBuilder('pendo_tabId');
-export const appLabelsStorage = SessionStorageBuilder('app_labels');
-
 export const setLocalStorage = (key, value) => {
   if (isEmpty(key)) return;
   localStorage.setItem(key, value);
@@ -76,3 +68,11 @@ export const SessionStorageBuilder = (key, defaultValue = undefined) => {
     },
   };
 };
+
+export const languageListStorage = SessionStorageBuilder('languageList');
+export const loginStatusStorage = SessionStorageBuilder('LOGIN_STATUS');
+export const previousPageLoadsStorage = SessionStorageBuilder('previous_page_loads');
+export const selectedLanguageStorage = SessionStorageBuilder('selected_Language');
+export const userIdentityStorage = SessionStorageBuilder('cadre-user-identity');
+export const pendoTabIdStorage = SessionStorageBuilder('pendo_tabId');
+export const appLabelsStorage = SessionStorageBuilder('app_labels');
