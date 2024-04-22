@@ -1,5 +1,7 @@
 const apiClient = (() => {
     const fetchWithInterceptors = (url, options = {}) => {
+        const fullUrl = `${baseUrl}${url.startsWith('/') ? url : '/' + url}`;
+
         const modifiedOptions = {
             ...options,
             headers: {
@@ -10,7 +12,7 @@ const apiClient = (() => {
             body: options.body && JSON.stringify(options.body)
         };
 
-        return fetch(url, modifiedOptions)
+        return fetch(fullUrl, modifiedOptions)
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(body => {
