@@ -1,14 +1,18 @@
 import { extractFullUrl, queryString } from "./helper";
+import { userIdentityStorage } from "./storage";
 
 const apiClient = (() => {
   const fetchWithInterceptors = (url, options = {}) => {
     const fullUrl = extractFullUrl(url, baseUrl);
+    const authToken = userIdentityStorage.get("token")?.token;
+    const authHeader = authToken ? `Bearer ${authToken}` : `Basic ${BASIC_AUTH}`;
+
     const modifiedOptions = {
       ...options,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         ...options.headers,
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        Authorization: authHeader,
       },
       body: options.body && queryString(options.body),
     };
