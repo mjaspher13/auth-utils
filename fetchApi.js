@@ -1,4 +1,5 @@
 import { queryString } from "./helper";
+import { userIdentityStorage } from "./storage";
 
 const apiClient = (() => {
   const fetchWithInterceptors = (url, options = {}) => {
@@ -8,7 +9,7 @@ const apiClient = (() => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         ...options.headers,
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        Authorization: `Bearer ${userIdentityStorage.get("token")?.token}` ?? `Basic ${BASIC_AUTH}`,
       },
       body: options.body && queryString(options.body),
     };
