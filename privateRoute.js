@@ -1,24 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
 
-const IdleTimer = ({ onIdle, timeout = 1000 * 60 * 15 }) => {
-  useEffect(() => {
-    const events = ['mousemove', 'keydown', 'scroll', 'click'];
-    let timeoutId = setTimeout(onIdle, timeout);
-    
-    const resetTimer = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(onIdle, timeout);
-    };
-    
-    events.forEach(event => window.addEventListener(event, resetTimer));
-    
-    return () => {
-      clearTimeout(timeoutId);
-      events.forEach(event => window.removeEventListener(event, resetTimer));
-    };
-  }, [onIdle, timeout]);
+const PrivateRoute = ({ children }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const location = useLocation();
 
-  return null;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 };
 
-export default IdleTimer;
+export default PrivateRoute;
