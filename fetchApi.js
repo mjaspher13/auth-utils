@@ -1,7 +1,19 @@
 import { queryString } from "./helper";
 import { userIdentityStorage } from "./storage";
 
+/**
+ * Creates an API client with methods to perform HTTP requests with authentication and additional processing.
+ * This client uses interceptors to modify all outgoing requests, adding authorization headers and converting
+ * body objects to query strings for form submissions.
+ */
 const apiClient = (() => {
+  /**
+   * Intercepts and modifies HTTP requests to include necessary headers and process body content.
+   *
+   * @param {string} url - The endpoint URL to which the request is sent.
+   * @param {Object} options - Configuration options for the fetch request, including headers and body.
+   * @return {Promise<Response>} - A promise that resolves with the response of the fetch request.
+   */
   const fetchWithInterceptors = (url, options = {}) => {
     const fullUrl = extractFullUrl(url, baseUrl);
     const modifiedOptions = {
@@ -9,7 +21,10 @@ const apiClient = (() => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         ...options.headers,
-        Authorization: `Bearer ${userIdentityStorage.get("token")?.token}` ?? `Basic ${BASIC_AUTH}`,
+        // Retrieves the user's token from storage, falling back to basic auth if no token is available.
+        Authorization:
+          `Bearer ${userIdentityStorage.get("token")?.token}` ??
+          `Basic ${BASIC_AUTH}`,
       },
       body: options.body && queryString(options.body),
     };
@@ -24,6 +39,7 @@ const apiClient = (() => {
     });
   };
 
+  // Public API methods for get, post, put, and delete operations using the fetch interceptor.
   return {
     get: (url, options = {}) =>
       fetchWithInterceptors(url, { ...options, method: "GET" }),
