@@ -1,3 +1,14 @@
+export const debounce = (func, delay) => {
+  let timerId;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+};
+
 export const isEmpty = (value) => {
   return (
     value == null ||
@@ -7,7 +18,8 @@ export const isEmpty = (value) => {
   );
 };
 
-export const extractFullUrl = (url, baseUrl) => `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+export const extractFullUrl = (url, baseUrl) =>
+  `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
 
 export const queryString = (obj, parentKey = "") => {
   const pairs = [];
