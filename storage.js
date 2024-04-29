@@ -83,7 +83,7 @@ export const getSessionStorage = (key, defaultValue = undefined) => {
  * Clears all entries from sessionStorage.
  */
 export const clearSessionStorage = () => {
-  sesionStorage.clear();
+  sessionStorage.clear();
 };
 
 /**
