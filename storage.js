@@ -147,6 +147,18 @@ export const loadState = (key) => {
   }
 };
 
+/**
+ * Clears all data from both localStorage and sessionStorage.
+ * This function is useful for ensuring that all user data is removed when they log out,
+ * or when you need to reset the application's stored state completely.
+ */
+export const clearAllStorage = () => {
+  // Clear all local storage data
+  localStorage.clear();
+  // Clear all session storage data
+  sessionStorage.clear();
+};
+
 export const languageListStorage = SessionStorageBuilder("languageList");
 export const loginStatusStorage = SessionStorageBuilder("LOGIN_STATUS");
 export const previousPageLoadsStorage = SessionStorageBuilder(
