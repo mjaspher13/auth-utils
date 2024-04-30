@@ -159,6 +159,43 @@ export const clearAllStorage = () => {
   sessionStorage.clear();
 };
 
+/**
+ * Sets up a proxy on the global sessionStorage object to intercept and handle all get, set, delete,
+ * and clear operations. This enables the application to react to changes in sessionStorage across
+ * different components by dispatching custom events whenever these operations occur.
+ */
+export function setupSessionStorageProxy() {
+  const originalSessionStorage = sessionStorage;
+
+  // Create a proxy to intercept and monitor operations on sessionStorage
+  const sessionStorageProxy = new Proxy(originalSessionStorage, {
+    // Intercept set operations to sessionStorage
+    set(target, property, value, receiver) {
+      const result = Reflect.set(target, property, value, receiver);
+      // Dispatch a custom event when a property is set
+      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'set', key: property, value } }));
+      return result;
+    },
+    // Intercept delete operations to sessionStorage
+    deleteProperty(target, property) {
+      const result = Reflect.deleteProperty(target, property);
+      // Dispatch a custom event when a property is deleted
+      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'delete', key: property } }));
+      return result;
+    },
+    // Intercept clear operations to sessionStorage
+    clear() {
+      const result = Reflect.apply(originalSessionStorage.clear, originalSessionStorage, []);
+      // Dispatch a custom event when sessionStorage is cleared
+      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'clear' } }));
+      return result;
+    }
+  });
+
+  // Override the global sessionStorage object with the proxy to ensure all interactions are monitored
+  window.sessionStorage = sessionStorageProxy;
+}
+
 export const languageListStorage = SessionStorageBuilder("languageList");
 export const loginStatusStorage = SessionStorageBuilder("LOGIN_STATUS");
 export const previousPageLoadsStorage = SessionStorageBuilder(
