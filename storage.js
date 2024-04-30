@@ -164,36 +164,50 @@ export const clearAllStorage = () => {
  * and clear operations. This enables the application to react to changes in sessionStorage across
  * different components by dispatching custom events whenever these operations occur.
  */
+// File: setupSessionStorageProxy.js
 export function setupSessionStorageProxy() {
-  const originalSessionStorage = sessionStorage;
+  // Back up the original sessionStorage methods
+  const originalGetItem = sessionStorage.getItem;
+  const originalSetItem = sessionStorage.setItem;
+  const originalRemoveItem = sessionStorage.removeItem;
+  const originalClear = sessionStorage.clear;
 
-  // Create a proxy to intercept and monitor operations on sessionStorage
-  const sessionStorageProxy = new Proxy(originalSessionStorage, {
-    // Intercept set operations to sessionStorage
-    set(target, property, value, receiver) {
-      const result = Reflect.set(target, property, value, receiver);
-      // Dispatch a custom event when a property is set
-      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'set', key: property, value } }));
-      return result;
-    },
-    // Intercept delete operations to sessionStorage
-    deleteProperty(target, property) {
-      const result = Reflect.deleteProperty(target, property);
-      // Dispatch a custom event when a property is deleted
-      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'delete', key: property } }));
-      return result;
-    },
-    // Intercept clear operations to sessionStorage
-    clear() {
-      const result = Reflect.apply(originalSessionStorage.clear, originalSessionStorage, []);
-      // Dispatch a custom event when sessionStorage is cleared
-      document.dispatchEvent(new CustomEvent('sessionStorageChanged', { detail: { type: 'clear' } }));
-      return result;
-    }
-  });
+  // Override getItem
+  sessionStorage.getItem = function (key) {
+    console.log(`Getting item: ${key}`);
+    return originalGetItem.apply(this, arguments);
+  };
 
-  // Override the global sessionStorage object with the proxy to ensure all interactions are monitored
-  window.sessionStorage = sessionStorageProxy;
+  // Override setItem
+  sessionStorage.setItem = function (key, value) {
+    console.log(`Setting item: ${key} to ${value}`);
+    document.dispatchEvent(
+      new CustomEvent("sessionStorageChanged", {
+        detail: { type: "set", key, value },
+      })
+    );
+    return originalSetItem.apply(this, arguments);
+  };
+
+  // Override removeItem
+  sessionStorage.removeItem = function (key) {
+    console.log(`Removing item: ${key}`);
+    document.dispatchEvent(
+      new CustomEvent("sessionStorageChanged", {
+        detail: { type: "delete", key },
+      })
+    );
+    return originalRemoveItem.apply(this, arguments);
+  };
+
+  // Override clear
+  sessionStorage.clear = function () {
+    console.log(`Clearing all sessionStorage`);
+    document.dispatchEvent(
+      new CustomEvent("sessionStorageChanged", { detail: { type: "clear" } })
+    );
+    return originalClear.apply(this);
+  };
 }
 
 export const languageListStorage = SessionStorageBuilder("languageList");
