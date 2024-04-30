@@ -1,5 +1,5 @@
 import { queryString } from "./helper";
-import { userIdentityStorage } from "./storage";
+import { userIdentityStorage } from "./store/storage";
 
 /**
  * Creates an API client with methods to perform HTTP requests with authentication and additional processing.
