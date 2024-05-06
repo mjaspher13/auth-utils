@@ -7,16 +7,16 @@ const SessionTimer = ({ timeout = 1000 * 60 * 15 }) => {
   const [idle, setIdle] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  let timeoutId;
+
+  const resetTimer = useCallback(() => {
+    clearTimeout(timeoutId);
+    setIdle(false);
+    timeoutId = setTimeout(() => setIdle(true), timeout);
+  }, [timeout]);
 
   useEffect(() => {
-    let timeoutId = setTimeout(() => setIdle(true), timeout);
-
-    const resetTimer = () => {
-      clearTimeout(timeoutId);
-      setIdle(false);
-      timeoutId = setTimeout(() => setIdle(true), timeout);
-    };
-
+    timeoutId = setTimeout(() => setIdle(true), timeout);
     const events = ["mousemove", "keydown", "scroll", "click"];
     events.forEach((event) => window.addEventListener(event, resetTimer));
 
@@ -24,11 +24,11 @@ const SessionTimer = ({ timeout = 1000 * 60 * 15 }) => {
       clearTimeout(timeoutId);
       events.forEach((event) => window.removeEventListener(event, resetTimer));
     };
-  }, [timeout]);
+  }, [resetTimer]);
 
   const handleStayActive = useCallback(() => {
-    setIdle(false);
-  }, []);
+    resetTimer();  // This will reset the idle timer
+  }, [resetTimer]);
 
   const handleLogout = useCallback(() => {
     setIdle(false);
