@@ -3,7 +3,10 @@ import { useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
-const SessionTimer = ({ timeout = 1000 * 60 * 15, promptTimeout = 1000 * 30 }) => {
+const SessionTimer = ({
+  timeout = 1000 * 60 * 15,
+  promptTimeout = 1000 * 30,
+}) => {
   const [idle, setIdle] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,20 +21,25 @@ const SessionTimer = ({ timeout = 1000 * 60 * 15, promptTimeout = 1000 * 30 }) =
   }, [timeout]);
 
   useEffect(() => {
-    resetTimer();
-    return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(promptTimeoutId);
-    };
-  }, [resetTimer]);
-
-  useEffect(() => {
     const events = ["mousemove", "keydown", "scroll", "click"];
-    events.forEach(event => window.addEventListener(event, resetTimer));
-    return () => {
-      events.forEach(event => window.removeEventListener(event, resetTimer));
+    const handleActivity = () => {
+      if (!idle) {
+        resetTimer();
+      }
     };
-  }, [resetTimer]);
+
+    // Attach event listeners if the user is not idle
+    if (!idle) {
+      events.forEach((event) => window.addEventListener(event, handleActivity));
+    }
+
+    return () => {
+      // Cleanup listeners when the component unmounts or when idle state changes
+      events.forEach((event) =>
+        window.removeEventListener(event, handleActivity)
+      );
+    };
+  }, [resetTimer, idle]);
 
   const handleStayActive = useCallback(() => {
     resetTimer();
@@ -48,7 +56,7 @@ const SessionTimer = ({ timeout = 1000 * 60 * 15, promptTimeout = 1000 * 30 }) =
     if (idle) {
       // Start the prompt timeout only when idle is true
       promptTimeoutId = setTimeout(() => {
-        handleLogout();  // Automatically log out when the prompt timer expires
+        handleLogout(); // Automatically log out when the prompt timer expires
       }, promptTimeout);
     }
     return () => clearTimeout(promptTimeoutId);
@@ -59,7 +67,10 @@ const SessionTimer = ({ timeout = 1000 * 60 * 15, promptTimeout = 1000 * 30 }) =
       {idle && (
         <div className="idle-prompt">
           <h2>Are you still there?</h2>
-          <p>Your session will expire in {promptTimeout / 1000} seconds. Do you want to stay logged in?</p>
+          <p>
+            Your session will expire in {promptTimeout / 1000} seconds. Do you
+            want to stay logged in?
+          </p>
           <button onClick={handleStayActive}>Yes, keep me logged in</button>
           <button onClick={handleLogout}>No, log me out</button>
         </div>
