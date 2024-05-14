@@ -40,6 +40,24 @@ export const clearLocalStorage = () => {
 };
 
 /**
+ * Clears all entries from localStorage except for the specified keys.
+ * @param {string[]} exceptKeys - The keys to exclude from being cleared.
+ */
+export const clearLocalStorageExcept = (exceptKeys) => {
+  const exceptValues = exceptKeys.reduce((acc, key) => {
+    const value = localStorage.getItem(key);
+    if (value !== null) acc[key] = value;
+    return acc;
+  }, {});
+
+  localStorage.clear();
+
+  Object.entries(exceptValues).forEach(([key, value]) => {
+    localStorage.setItem(key, value);
+  });
+};
+
+/**
  * Creates a storage interface for a specific key using localStorage.
  * @param {string} key - The key associated with the storage operations.
  * @param {any} defaultValue - Default value to use when no value is retrieved.
