@@ -1,26 +1,21 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleTheme } from './themeSlice';
+import { useLocation } from 'react-router-dom';
+import { loadTheme } from './loadTheme';
 
 const ThemeSwitcher = () => {
-  const theme = useSelector((state) => state.theme);
-  const dispatch = useDispatch();
-
-  const handleToggle = () => {
-    dispatch(toggleTheme());
-  };
+  const location = useLocation();
 
   useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
+    let theme = 'light'; // default theme
+    if (location.pathname.includes('dark')) {
+      theme = 'dark';
+    } else if (location.pathname.includes('another')) {
+      theme = 'another';
+    }
+    loadTheme(theme);
+  }, [location]);
 
-  return (
-    <div>
-      <button onClick={handleToggle}>
-        Switch to {theme === 'light' ? 'dark' : 'light'} theme
-      </button>
-    </div>
-  );
+  return null;
 };
 
 export default ThemeSwitcher;
