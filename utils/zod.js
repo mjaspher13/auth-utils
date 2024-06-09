@@ -7,15 +7,22 @@ class ZodValidator {
    * Constructor for ZodValidator.
    * @param {*} value - The value to be validated.
    * @param {boolean} [isOptional=false] - Whether the value is optional.
+   * @param {boolean} [isNullable=false] - Whether the value can be null.
    */
-  constructor(value, isOptional = false) {
+  constructor(value, isOptional = false, isNullable = false) {
     this.errors = [];
     this.value = value;
     this.isOptional = isOptional;
+    this.isNullable = isNullable;
 
     // If the value is not optional and is undefined, add an error
     if (!isOptional && value === undefined) {
       this.errors.push('Value is required');
+    }
+
+    // If the value is not nullable and is null, add an error
+    if (!isNullable && value === null) {
+      this.errors.push('Value cannot be null');
     }
   }
 
@@ -25,6 +32,15 @@ class ZodValidator {
    */
   optional() {
     this.isOptional = true;
+    return this;
+  }
+
+  /**
+   * Mark the value as nullable.
+   * @returns {ZodValidator} - The instance of the validator.
+   */
+  nullable() {
+    this.isNullable = true;
     return this;
   }
 
@@ -50,6 +66,10 @@ class ZodValidator {
       return this.value;
     }
 
+    if (this.isNullable && this.value === null) {
+      return this.value;
+    }
+
     if (this.errors.length > 0) {
       throw new Error(`Validation errors: ${this.errors.join(', ')}`);
     }
@@ -67,7 +87,7 @@ class StringValidator extends ZodValidator {
    */
   constructor(value) {
     super(value);
-    if (value !== undefined && typeof value !== 'string') {
+    if (value !== undefined && value !== null && typeof value !== 'string') {
       this.errors.push('Expected string');
     }
   }
@@ -132,7 +152,7 @@ class NumberValidator extends ZodValidator {
    */
   constructor(value) {
     super(value);
-    if (value !== undefined && typeof value !== 'number') {
+    if (value !== undefined && value !== null && typeof value !== 'number') {
       this.errors.push('Expected number');
     }
   }
@@ -172,7 +192,7 @@ class ObjectValidator extends ZodValidator {
    */
   constructor(value) {
     super(value);
-    if (value !== undefined && (typeof value !== 'object' || value === null)) {
+    if (value !== undefined && value !== null && (typeof value !== 'object' || value === null)) {
       this.errors.push('Expected object');
     }
   }
@@ -206,7 +226,7 @@ class BooleanValidator extends ZodValidator {
    */
   constructor(value) {
     super(value);
-    if (value !== undefined && typeof value !== 'boolean') {
+    if (value !== undefined && value !== null && typeof value !== 'boolean') {
       this.errors.push('Expected boolean');
     }
   }
