@@ -111,8 +111,8 @@ class StringValidator extends ZodValidator {
 }
 
 /**
-   * Validator class for numbers.
-   */
+ * Validator class for numbers.
+ */
 class NumberValidator extends ZodValidator {
   /**
    * Constructor for NumberValidator.
@@ -185,6 +185,22 @@ class ObjectValidator extends ZodValidator {
 }
 
 /**
+ * Validator class for booleans.
+ */
+class BooleanValidator extends ZodValidator {
+  /**
+   * Constructor for BooleanValidator.
+   * @param {*} value - The value to be validated.
+   */
+  constructor(value) {
+    super(value);
+    if (value !== undefined && typeof value !== 'boolean') {
+      this.errors.push('Expected boolean');
+    }
+  }
+}
+
+/**
  * Validator class for any type.
  */
 class AnyValidator extends ZodValidator {
@@ -204,6 +220,7 @@ const Zod = {
   string: (value) => new StringValidator(value),
   number: (value) => new NumberValidator(value),
   object: (value) => new ObjectValidator(value),
+  boolean: (value) => new BooleanValidator(value),
   any: (value) => new AnyValidator(value),
 };
 
