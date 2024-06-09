@@ -111,8 +111,8 @@ class StringValidator extends ZodValidator {
 }
 
 /**
- * Validator class for numbers.
- */
+   * Validator class for numbers.
+   */
 class NumberValidator extends ZodValidator {
   /**
    * Constructor for NumberValidator.
@@ -185,12 +185,26 @@ class ObjectValidator extends ZodValidator {
 }
 
 /**
+ * Validator class for any type.
+ */
+class AnyValidator extends ZodValidator {
+  /**
+   * Constructor for AnyValidator.
+   * @param {*} value - The value to be validated.
+   */
+  constructor(value) {
+    super(value);
+  }
+}
+
+/**
  * Zod object containing factory methods for validators.
  */
 const Zod = {
   string: (value) => new StringValidator(value),
   number: (value) => new NumberValidator(value),
   object: (value) => new ObjectValidator(value),
+  any: (value) => new AnyValidator(value),
 };
 
 /**
