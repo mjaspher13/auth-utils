@@ -3,41 +3,68 @@
  * Handles common validation logic and error handling.
  */
 class ZodValidator {
+  /**
+   * Constructor for ZodValidator.
+   * @param {*} value - The value to be validated.
+   * @param {boolean} [isOptional=false] - Whether the value is optional.
+   */
   constructor(value, isOptional = false) {
     this.errors = [];
     this.value = value;
     this.isOptional = isOptional;
 
+    // If the value is not optional and is undefined, add an error
     if (!isOptional && value === undefined) {
-      this.errors.push("Value is required");
+      this.errors.push('Value is required');
     }
   }
 
+  /**
+   * Mark the value as optional.
+   * @returns {ZodValidator} - The instance of the validator.
+   */
   optional() {
     this.isOptional = true;
     return this;
   }
 
+  /**
+   * Validate the value and return it if valid.
+   * @returns {*} - The validated value.
+   * @throws {Error} - Throws an error if validation fails.
+   */
   validate() {
     if (this.isOptional && this.value === undefined) {
       return this.value;
     }
 
     if (this.errors.length > 0) {
-      throw new Error(`Validation errors: ${this.errors.join(", ")}`);
+      throw new Error(`Validation errors: ${this.errors.join(', ')}`);
     }
     return this.value;
   }
 }
 
+/**
+ * Validator class for strings.
+ */
 class StringValidator extends ZodValidator {
+  /**
+   * Constructor for StringValidator.
+   * @param {*} value - The value to be validated.
+   */
   constructor(value) {
     super(value);
-    if (value !== undefined && typeof value !== "string") {
-      this.errors.push("Expected string");
+    if (value !== undefined && typeof value !== 'string') {
+      this.errors.push('Expected string');
     }
   }
 
+  /**
+   * Ensure the string has a minimum length.
+   * @param {number} length - The minimum length.
+   * @returns {StringValidator} - The instance of the validator.
+   */
   minLength(length) {
     if (this.value !== undefined && this.value.length < length) {
       this.errors.push(`String should be at least ${length} characters long`);
@@ -45,6 +72,11 @@ class StringValidator extends ZodValidator {
     return this;
   }
 
+  /**
+   * Ensure the string has a maximum length.
+   * @param {number} length - The maximum length.
+   * @returns {StringValidator} - The instance of the validator.
+   */
   maxLength(length) {
     if (this.value !== undefined && this.value.length > length) {
       this.errors.push(`String should be at most ${length} characters long`);
@@ -52,25 +84,52 @@ class StringValidator extends ZodValidator {
     return this;
   }
 
+  /**
+   * Ensure the string is a valid email format.
+   * @returns {StringValidator} - The instance of the validator.
+   */
   email() {
     if (this.value !== undefined) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(this.value)) {
-        this.errors.push("Invalid email format");
+        this.errors.push('Invalid email format');
       }
+    }
+    return this;
+  }
+
+  /**
+   * Ensure the string is not empty.
+   * @returns {StringValidator} - The instance of the validator.
+   */
+  nonempty() {
+    if (this.value !== undefined && this.value.trim().length === 0) {
+      this.errors.push('String cannot be empty');
     }
     return this;
   }
 }
 
+/**
+ * Validator class for numbers.
+ */
 class NumberValidator extends ZodValidator {
+  /**
+   * Constructor for NumberValidator.
+   * @param {*} value - The value to be validated.
+   */
   constructor(value) {
     super(value);
-    if (value !== undefined && typeof value !== "number") {
-      this.errors.push("Expected number");
+    if (value !== undefined && typeof value !== 'number') {
+      this.errors.push('Expected number');
     }
   }
 
+  /**
+   * Ensure the number is at least a given value.
+   * @param {number} value - The minimum value.
+   * @returns {NumberValidator} - The instance of the validator.
+   */
   min(value) {
     if (this.value !== undefined && this.value < value) {
       this.errors.push(`Number should be at least ${value}`);
@@ -78,6 +137,11 @@ class NumberValidator extends ZodValidator {
     return this;
   }
 
+  /**
+   * Ensure the number is at most a given value.
+   * @param {number} value - The maximum value.
+   * @returns {NumberValidator} - The instance of the validator.
+   */
   max(value) {
     if (this.value !== undefined && this.value > value) {
       this.errors.push(`Number should be at most ${value}`);
@@ -86,14 +150,26 @@ class NumberValidator extends ZodValidator {
   }
 }
 
+/**
+ * Validator class for objects.
+ */
 class ObjectValidator extends ZodValidator {
+  /**
+   * Constructor for ObjectValidator.
+   * @param {*} value - The value to be validated.
+   */
   constructor(value) {
     super(value);
-    if (value !== undefined && (typeof value !== "object" || value === null)) {
-      this.errors.push("Expected object");
+    if (value !== undefined && (typeof value !== 'object' || value === null)) {
+      this.errors.push('Expected object');
     }
   }
 
+  /**
+   * Validate the shape of the object based on a schema.
+   * @param {Object} schema - The validation schema.
+   * @returns {ObjectValidator} - The instance of the validator.
+   */
   shape(schema) {
     for (const key in schema) {
       if (schema.hasOwnProperty(key)) {
@@ -108,6 +184,9 @@ class ObjectValidator extends ZodValidator {
   }
 }
 
+/**
+ * Zod object containing factory methods for validators.
+ */
 const Zod = {
   string: (value) => new StringValidator(value),
   number: (value) => new NumberValidator(value),
@@ -118,7 +197,7 @@ const Zod = {
  * Validates an object against a schema.
  * @param {Object} schema - The validation schema.
  * @param {Object} data - The data to validate.
- * @return {Object} - The validated data.
+ * @returns {Object} - The validated data.
  * @throws {Error} - Throws an error if validation fails.
  */
 function validateSchema(schema, data) {
