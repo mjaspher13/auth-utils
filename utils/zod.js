@@ -29,6 +29,18 @@ class ZodValidator {
   }
 
   /**
+   * Set a default value if the value is undefined.
+   * @param {*} defaultValue - The default value to be used.
+   * @returns {ZodValidator} - The instance of the validator.
+   */
+  default(defaultValue) {
+    if (this.value === undefined) {
+      this.value = defaultValue;
+    }
+    return this;
+  }
+
+  /**
    * Validate the value and return it if valid.
    * @returns {*} - The validated value.
    * @throws {Error} - Throws an error if validation fails.
