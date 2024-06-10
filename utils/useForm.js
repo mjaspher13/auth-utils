@@ -45,7 +45,18 @@ const useForm = (schema) => {
     }
   };
 
-  return { handleStatusUpdate, handleSubmit, values, errors };
+  const isFormValid = () => {
+    for (const key in schema) {
+      if (schema.hasOwnProperty(key)) {
+        if (validateField(key, values[key])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  return { handleStatusUpdate, handleSubmit, values, errors, isFormValid };
 };
 
 export default useForm;
