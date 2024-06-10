@@ -22,8 +22,7 @@ const useForm = (schema) => {
     return null;
   }, [schema]);
 
-  const handleChange = useCallback((event) => {
-    const { name, value } = event.target;
+  const handleChange = useCallback((name, value) => {
     setValues((prevValues) => ({ ...prevValues, [name]: value }));
     const error = validateField(name, value);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
@@ -52,9 +51,13 @@ const useForm = (schema) => {
   };
 
   const register = (name) => ({
-    name,
+    inputName: name,
     value: values[name] || '',
-    onChange: handleChange,
+    onChange: (e) => handleChange(name, e.target.value),
+    statusUpdateCallback: (status) => {
+      handleChange(name, status.rawValue);
+    },
+    errorMessages: errors[name] ? { default: errors[name] } : {},
   });
 
   return { register, handleSubmit, values, errors };
