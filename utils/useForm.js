@@ -11,15 +11,17 @@ const useForm = (schema) => {
   const [errors, setErrors] = useState({});
 
   const validateField = useCallback((name, value) => {
-    if (schema[name]) {
+    if (typeof schema[name] === 'function') {
       try {
         schema[name](value).validate();
         return null;
       } catch (error) {
         return error.message;
       }
+    } else {
+      console.error(`No validation function for field: ${name}`);
+      return `No validation function for field: ${name}`;
     }
-    return null;
   }, [schema]);
 
   const handleChange = useCallback((name, value) => {
@@ -28,39 +30,22 @@ const useForm = (schema) => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   }, [validateField]);
 
+  const handleStatusUpdate = useCallback((name, status) => {
+    const { rawValue } = status;
+    handleChange(name, rawValue);
+  }, [handleChange]);
+
   const handleSubmit = (callback) => (event) => {
     event.preventDefault();
-    const newErrors = {};
-    let isValid = true;
-
-    for (const key in schema) {
-      if (schema.hasOwnProperty(key)) {
-        const error = validateField(key, values[key]);
-        if (error) {
-          isValid = false;
-          newErrors[key] = error;
-        }
-      }
-    }
-
-    setErrors(newErrors);
-
-    if (isValid) {
-      callback(values);
+    try {
+      const validatedData = validateSchema(schema, values);
+      callback(validatedData);
+    } catch (error) {
+      setErrors(error.errors);
     }
   };
 
-  const register = (name) => ({
-    inputName: name,
-    value: values[name] || '',
-    onChange: (e) => handleChange(name, e.target.value),
-    statusUpdateCallback: (status) => {
-      handleChange(name, status.rawValue);
-    },
-    errorMessages: errors[name] ? { default: errors[name] } : {},
-  });
-
-  return { register, handleSubmit, values, errors };
+  return { handleStatusUpdate, handleSubmit, values, errors };
 };
 
 export default useForm;
