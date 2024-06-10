@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-import { validateSchema } from './zod';
-import { NumberValidator } from './zod';
+import { validateSchema, NumberValidator } from './zod';
 
 /**
  * Custom hook for form state management and validation.
@@ -25,12 +24,12 @@ const useForm = (schema) => {
     }
   }, [schema]);
 
-  const handleChange = useCallback((name, value) => {
-    let parsedValue = value;
+  const handleChange = useCallback((name, inputValue) => {
+    let parsedValue = inputValue;
 
     // Check if the schema expects a number and parse the value accordingly
-    if (schema[name] && schema[name]().constructor === NumberValidator) {
-      parsedValue = parseFloat(value);
+    if (schema[name] && schema[name](parsedValue) instanceof NumberValidator) {
+      parsedValue = parseFloat(inputValue);
       if (isNaN(parsedValue)) {
         parsedValue = undefined;
       }
@@ -42,8 +41,8 @@ const useForm = (schema) => {
   }, [validateField, schema]);
 
   const handleStatusUpdate = useCallback((name, status) => {
-    const { rawValue } = status;
-    handleChange(name, rawValue);
+    const { inputValue } = status;
+    handleChange(name, inputValue);
   }, [handleChange]);
 
   const handleSubmit = (callback) => (event) => {
@@ -58,8 +57,10 @@ const useForm = (schema) => {
 
   const isFormValid = () => {
     for (const key in schema) {
-      if (schema.hasOwnProperty(key)) {
-        if (validateField(key, values[key])) {
+      if (Object.prototype.hasOwnProperty.call(schema, key)) {
+        const error = validateField(key, values[key]);
+        console.log(`Validating field ${key}:`, error);
+        if (error) {
           return false;
         }
       }
