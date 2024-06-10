@@ -233,8 +233,8 @@ class BooleanValidator extends ZodValidator {
 }
 
 /**
- * Validator class for any type.
- */
+   * Validator class for any type.
+   */
 class AnyValidator extends ZodValidator {
   /**
    * Constructor for AnyValidator.
@@ -246,8 +246,8 @@ class AnyValidator extends ZodValidator {
 }
 
 /**
- * Zod object containing factory methods for validators.
- */
+   * Zod object containing factory methods for validators.
+   */
 const Zod = {
   string: (value) => new StringValidator(value),
   number: (value) => new NumberValidator(value),
@@ -269,4 +269,4 @@ function validateSchema(schema, data) {
 }
 
 export default Zod;
-export { validateSchema };
+export { validateSchema, NumberValidator };

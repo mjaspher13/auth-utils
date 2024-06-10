@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { validateSchema } from './zod';
+import { NumberValidator } from './zod';
 
 /**
  * Custom hook for form state management and validation.
@@ -25,10 +26,20 @@ const useForm = (schema) => {
   }, [schema]);
 
   const handleChange = useCallback((name, value) => {
-    setValues((prevValues) => ({ ...prevValues, [name]: value }));
-    const error = validateField(name, value);
+    let parsedValue = value;
+
+    // Check if the schema expects a number and parse the value accordingly
+    if (schema[name] && schema[name]().constructor === NumberValidator) {
+      parsedValue = parseFloat(value);
+      if (isNaN(parsedValue)) {
+        parsedValue = undefined;
+      }
+    }
+
+    setValues((prevValues) => ({ ...prevValues, [name]: parsedValue }));
+    const error = validateField(name, parsedValue);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
-  }, [validateField]);
+  }, [validateField, schema]);
 
   const handleStatusUpdate = useCallback((name, status) => {
     const { rawValue } = status;
