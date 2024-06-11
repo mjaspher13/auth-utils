@@ -47,11 +47,28 @@ const useForm = (schema) => {
 
   const handleSubmit = (callback) => (event) => {
     event.preventDefault();
-    try {
-      const validatedData = validateSchema(schema, values);
-      callback(validatedData);
-    } catch (error) {
-      setErrors(error.errors);
+    let isValid = true;
+    const validationErrors = {};
+
+    for (const key in schema) {
+      if (Object.prototype.hasOwnProperty.call(schema, key)) {
+        const error = validateField(key, values[key]);
+        if (error) {
+          isValid = false;
+          validationErrors[key] = error;
+        }
+      }
+    }
+
+    if (isValid) {
+      try {
+        const validatedData = validateSchema(schema, values);
+        callback(validatedData);
+      } catch (error) {
+        setErrors(error.errors);
+      }
+    } else {
+      setErrors(validationErrors);
     }
   };
 
@@ -59,7 +76,6 @@ const useForm = (schema) => {
     for (const key in schema) {
       if (Object.prototype.hasOwnProperty.call(schema, key)) {
         const error = validateField(key, values[key]);
-        console.log(`Validating field ${key}:`, error);
         if (error) {
           return false;
         }
@@ -68,7 +84,7 @@ const useForm = (schema) => {
     return true;
   };
 
-  return { handleStatusUpdate, handleSubmit, values, errors, isFormValid };
+  return { handleChange, handleStatusUpdate, handleSubmit, values, errors, isFormValid };
 };
 
 export default useForm;
