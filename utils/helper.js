@@ -20,23 +20,6 @@ export const debounce = (func, delay) => {
 };
 
 /**
- * Checks if a given value is "empty".
- * "Empty" values are those that are either null, undefined, an empty object,
- * an empty array, or a string made only of whitespace.
- *
- * @param {any} value - The value to check.
- * @return {boolean} - True if the value is empty, false otherwise.
- */
-export const isEmpty = (value) => {
-  return (
-    value == null ||
-    (typeof value === "object" && Object.keys(value).length === 0) ||
-    (Array.isArray(value) && value.length === 0) ||
-    (typeof value === "string" && value.trim().length === 0)
-  );
-};
-
-/**
  * Constructs a full URL by combining a base URL and a relative URL.
  * If the relative URL does not start with a slash, one is prepended.
  *
@@ -46,6 +29,21 @@ export const isEmpty = (value) => {
  */
 export const extractFullUrl = (url, baseUrl) =>
   `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+
+/**
+ * Checks if a given value is "empty".
+ * "Empty" values are those that are either null, undefined, an empty object,
+ * an empty array, or a string made only of whitespace.
+ *
+ * @param {any} value - The value to check.
+ * @return {boolean} - True if the value is empty, false otherwise.
+ */
+export const isEmpty = (value) => {
+  value == null ||
+    (typeof value === "object" && Object.keys(value).length === 0) ||
+    (Array.isArray(value) && value.length === 0) ||
+    (typeof value === "string" && value.trim().length === 0);
+};
 
 /**
  * Converts an object into a URL query string.
@@ -90,7 +88,6 @@ export const queryString = (obj, parentKey = "") => {
  * @param {string} inputStr - The string to clean.
  * @return {string} - A string containing only numbers and decimal points.
  */
-function cleanCurrency(inputStr) {
-  // Use regex to replace all characters except digits and decimal points
-  return inputStr.replace(/[^\d.]/g, '');
-}
+export const cleanCurrency = (inputStr) => {
+  return inputStr.replace(/[^\d.]/g, "");
+};
