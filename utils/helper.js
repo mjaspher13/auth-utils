@@ -83,3 +83,14 @@ export const queryString = (obj, parentKey = "") => {
 
   return pairs.join("&");
 };
+
+/**
+ * Remove non-numeric and non-decimal characters from a string.
+ *
+ * @param {string} inputStr - The string to clean.
+ * @return {string} - A string containing only numbers and decimal points.
+ */
+function cleanCurrency(inputStr) {
+  // Use regex to replace all characters except digits and decimal points
+  return inputStr.replace(/[^\d.]/g, '');
+}
