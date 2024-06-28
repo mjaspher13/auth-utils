@@ -14,6 +14,7 @@ class ZodValidator {
     this.value = value;
     this.isOptional = isOptional;
     this.isNullable = isNullable;
+    this.defaultValue = undefined;
 
     // If the value is not optional and is undefined, add an error
     if (!isOptional && value === undefined) {
@@ -50,6 +51,7 @@ class ZodValidator {
    * @returns {ZodValidator} - The instance of the validator.
    */
   default(defaultValue) {
+    this.defaultValue = defaultValue;
     if (this.value === undefined) {
       this.value = defaultValue;
     }
@@ -63,7 +65,7 @@ class ZodValidator {
    */
   validate() {
     if (this.isOptional && this.value === undefined) {
-      return this.value;
+      return this.defaultValue;
     }
 
     if (this.isNullable && this.value === null) {
@@ -233,8 +235,8 @@ class BooleanValidator extends ZodValidator {
 }
 
 /**
-   * Validator class for any type.
-   */
+ * Validator class for any type.
+ */
 class AnyValidator extends ZodValidator {
   /**
    * Constructor for AnyValidator.
@@ -246,8 +248,8 @@ class AnyValidator extends ZodValidator {
 }
 
 /**
-   * Zod object containing factory methods for validators.
-   */
+ * Zod object containing factory methods for validators.
+ */
 const Zod = {
   string: (value) => new StringValidator(value),
   number: (value) => new NumberValidator(value),

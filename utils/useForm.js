@@ -7,7 +7,18 @@ import { validateSchema, NumberValidator } from './zod';
  * @returns {Object} - Form utilities.
  */
 const useForm = (schema) => {
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(() => {
+    const initialValues = {};
+    for (const key in schema) {
+      if (Object.prototype.hasOwnProperty.call(schema, key)) {
+        const validator = schema[key]();
+        if (validator.defaultValue !== undefined) {
+          initialValues[key] = validator.defaultValue;
+        }
+      }
+    }
+    return initialValues;
+  });
   const [errors, setErrors] = useState({});
 
   const validateField = useCallback((name, value) => {
