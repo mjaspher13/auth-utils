@@ -59,6 +59,7 @@ export const queryString = (obj, parentKey = "") => {
   const encode = encodeURIComponent;
 
   const buildQueryString = (obj, parentKey = "") => {
+    if (obj == null) return;
     Object.entries(obj).forEach(([key, value]) => {
       if (value == null) return;
       const fullKey = parentKey ? `${parentKey}[${encode(key)}]` : encode(key);
