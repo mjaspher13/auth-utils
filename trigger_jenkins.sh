@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# Jenkins webhook URL
-JENKINS_URL="http://your-jenkins-server/job/your-job-name/buildWithParameters"
-
-# Optional: Add authentication if required
+# Jenkins details
+JENKINS_URL="http://your-jenkins-server"
+JOB_NAME="your-job-name"
 JENKINS_USER="your-username"
 JENKINS_TOKEN="your-api-token"
+TOKEN="your-token"
 
-# Parameters (if any)
-PARAM1_NAME="param1"
-PARAM1_VALUE="value1"
+# Get the CSRF crumb
+CRUMB=$(curl -u "$JENKINS_USER:$JENKINS_TOKEN" -s "$JENKINS_URL/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)")
 
 # Trigger the Jenkins build
-curl -X POST "${JENKINS_URL}" --user "${JENKINS_USER}:${JENKINS_TOKEN}" \
---data-urlencode "${PARAM1_NAME}=${PARAM1_VALUE}"
+curl -u "$JENKINS_USER:$JENKINS_TOKEN" -H "$CRUMB" -X POST "$JENKINS_URL/job/$JOB_NAME/build?token=$TOKEN"
