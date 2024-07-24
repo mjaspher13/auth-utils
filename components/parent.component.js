@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getActiveCardsData } from '../../app/actions/activeCardSlice';
-import Loader from '../../common/loader/loader';
-import { USBTable } from '@usb-shield/react-table';
-import { USBIconEdit, USBIconDownload, USBIconShow2 } from '@usb-shield/react-icons';
-import { USBCard } from '@usb-shield/react-card';
-import dayjs from 'dayjs';
-import SearchFilter from './searchFilters';
-import DropdownFilter from './DropdownFilter';
-import { SEARCH_VALUES, COLUMNS } from './constants';
-import './activeCards.scss';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getActiveCardsData } from "../../app/actions/activeCardSlice";
+import Loader from "../../common/loader/loader";
+import { USBTable } from "@usb-shield/react-table";
+import {
+  USBIconEdit,
+  USBIconDownload,
+  USBIconShow2,
+} from "@usb-shield/react-icons";
+import { USBCard } from "@usb-shield/react-card";
+import dayjs from "dayjs";
+import SearchFilter from "./searchFilters";
+import DropdownFilter from "./DropdownFilter";
+import { SEARCH_VALUES, COLUMNS } from "./constants";
+import "./activeCards.scss";
 
 const ActiveCards = (props) => {
   const dispatch = useDispatch();
@@ -41,7 +45,7 @@ const ActiveCards = (props) => {
   const matchesSearch = (item, key, value) => {
     if (!value) return true;
     const itemValue = item[key];
-    if (typeof itemValue === 'string' || itemValue instanceof String) {
+    if (typeof itemValue === "string" || itemValue instanceof String) {
       return itemValue.toLowerCase().includes(value.toLowerCase());
     }
     return false;
@@ -57,7 +61,11 @@ const ActiveCards = (props) => {
     result = result.filter((item) =>
       columns.every((column) => {
         if (column.isVisible && searchValue[column.accessorKey]) {
-          return matchesSearch(item, column.accessorKey, searchValue[column.accessorKey]);
+          return matchesSearch(
+            item,
+            column.accessorKey,
+            searchValue[column.accessorKey]
+          );
         }
         return true;
       })
@@ -89,12 +97,42 @@ const ActiveCards = (props) => {
     );
   };
 
+  /**
+   * Basic sorting function for dates.
+   * @param {object} a - The first item to compare.
+   * @param {object} b - The second item to compare.
+   * @param {string} columnId - The column being sorted.
+   * @param {boolean} desc - Whether the sort is descending.
+   * @returns {number} - Comparison result for sorting.
+   */
+  const basicDateSorting = (a, b, columnId, desc) => {
+    const aDate = dayjs(a[columnId]);
+    const bDate = dayjs(b[columnId]);
+
+    if (!aDate.isValid() || !bDate.isValid()) return 0;
+
+    if (aDate.isBefore(bDate)) {
+      return desc ? 1 : -1;
+    }
+    if (aDate.isAfter(bDate)) {
+      return desc ? -1 : 1;
+    }
+    return 0;
+  };
+
   return (
     <div className="activeCardsContainer">
       <br />
       <br />
-      <SearchFilter setSearchValue={setSearchValue} searchValue={searchValue} handleSearch={handleAccountSearch} />
-      <DropdownFilter handleDropdownChange={handleDropdownChange} dropdownItems={dropdownItems} />
+      <SearchFilter
+        setSearchValue={setSearchValue}
+        searchValue={searchValue}
+        handleSearch={handleAccountSearch}
+      />
+      <DropdownFilter
+        handleDropdownChange={handleDropdownChange}
+        dropdownItems={dropdownItems}
+      />
       <p className="para-head">VIEWING OF {filteredData.length} ACTIVE CARDS</p>
       <USBCard.Body className="tableContainer">
         {activeCards.isLoading ? (
@@ -133,23 +171,24 @@ const ActiveCards = (props) => {
             }}
             content={{
               paginationDropdownItems: [
-                { label: '5 rows', value: 5 },
-                { label: '10 rows', value: 10 },
-                { label: '20 rows', value: 20 },
+                { label: "5 rows", value: 5 },
+                { label: "10 rows", value: 10 },
+                { label: "20 rows", value: 20 },
               ],
               showHideText: {
-                modalBodyCurrentSort: ' is currently being sorted.',
-                modalBodyLegend: 'Select the columns to show.',
-                modalBodyLegendColumns: ' are essential columns and cannot be hidden.',
-                modalBodyTitle: 'Show/Hide columns',
-                modalButtonLabel: tableHeaderButton('show'),
-                modalFooterApply: 'Apply',
-                modalFooterCancel: 'Cancel',
+                modalBodyCurrentSort: " is currently being sorted.",
+                modalBodyLegend: "Select the columns to show.",
+                modalBodyLegendColumns:
+                  " are essential columns and cannot be hidden.",
+                modalBodyTitle: "Show/Hide columns",
+                modalButtonLabel: tableHeaderButton("show"),
+                modalFooterApply: "Apply",
+                modalFooterCancel: "Cancel",
               },
               batchActions: {
-                selectAllCheckboxAriaLabel: 'Select',
-                selectAllCheckboxLabel: 'Select all',
-                selectRowCheckboxAriaLabel: 'Select item',
+                selectAllCheckboxAriaLabel: "Select",
+                selectAllCheckboxLabel: "Select all",
+                selectRowCheckboxAriaLabel: "Select item",
               },
             }}
             emptyTableContent="We couldn't find any matching transactions. Search again with different criteria."
@@ -163,17 +202,17 @@ const ActiveCards = (props) => {
               primary: [
                 {
                   clickEvent: function noRefCheck() {},
-                  id: 'primary-button-test-id',
-                  size: 'small',
-                  text: tableHeaderButton('download'),
-                  type: 'secondary',
+                  id: "primary-button-test-id",
+                  size: "small",
+                  text: tableHeaderButton("download"),
+                  type: "secondary",
                 },
                 {
                   clickEvent: function noRefCheck() {},
-                  id: 'secondary-button-test-id',
-                  size: 'small',
-                  text: tableHeaderButton('edit'),
-                  type: 'secondary',
+                  id: "secondary-button-test-id",
+                  size: "small",
+                  text: tableHeaderButton("edit"),
+                  type: "secondary",
                 },
               ],
             }}
