@@ -36,20 +36,23 @@ const ActiveCards = (props) => {
     }
   }, [activeCards]);
 
-  /**
+   /**
    * Generic function to filter items based on a search value.
    * @param {object} item - The item to check.
-   * @param {string} key - The key to search in the item.
    * @param {string} value - The search value.
+   * @param {object} columnVisibility - The visibility state of columns.
    * @returns {boolean} - Whether the item matches the search criteria.
    */
-    const matchesSearch = (item, key, value, columnVisibility) => {
-    if (!value || !columnVisibility[key]) return true;
-    const itemValue = item[key];
-    if (typeof itemValue === 'string' || itemValue instanceof String) {
-      return itemValue.toLowerCase().includes(value.toLowerCase());
-    }
-    return false;
+   const matchesSearch = (item, value, columnVisibility) => {
+    if (!value) return true;
+    return Object.keys(columnVisibility).some((key) => {
+      if (!columnVisibility[key]) return false;
+      const itemValue = item[key];
+      if (typeof itemValue === 'string' || itemValue instanceof String) {
+        return itemValue.toLowerCase().includes(value.toLowerCase());
+      }
+      return false;
+    });
   };
 
   /**
@@ -60,14 +63,7 @@ const ActiveCards = (props) => {
     e.preventDefault();
     let result = tableData;
     // Apply filters based on visible columns
-    result = result.filter((item) =>
-      columns.every((column) => {
-        if (column.isVisible && searchValue[column.accessorKey]) {
-          return matchesSearch(item, column.accessorKey, searchValue[column.accessorKey], columnVisibility);
-        }
-        return true;
-      })
-    );
+    result = result.filter((item) => matchesSearch(item, searchValue, columnVisibility));
     // Apply dropdown filter
     setFilteredData(result);
     setPaginationIndex(true);
