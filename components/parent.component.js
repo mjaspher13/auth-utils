@@ -19,6 +19,7 @@ const ActiveCards = (props) => {
   const dispatch = useDispatch();
   const activeCards = useSelector((state) => state.activeCards);
   const [searchValue, setSearchValue] = useState(SEARCH_VALUES);
+  const [selectedDropdown, setSelectedDropdown] = useState('Me');
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [paginationIndex, setPaginationIndex] = useState(false);
@@ -131,8 +132,8 @@ const ActiveCards = (props) => {
 
   // Define dropdown items
   const dropdownItems = [
-    { id: 1, value: 'All' },
-    { id: 2, value: 'Me' },
+    { id: 1, value: "All" },
+    { id: 2, value: "Me" },
   ];
 
   return (
