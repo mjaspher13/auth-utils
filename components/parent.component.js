@@ -120,6 +120,21 @@ const ActiveCards = (props) => {
     return 0;
   };
 
+  /**
+   * Handles the dropdown change to filter data based on selection.
+   * @param {object} selectedItem - The selected dropdown item.
+   */
+  const handleDropdownChange = (selectedItem) => {
+    setSelectedDropdown(selectedItem.value);
+    handleAccountSearch({ preventDefault: () => {} }); // Reapply search with new dropdown filter
+  };
+
+  // Define dropdown items
+  const dropdownItems = [
+    { id: 1, value: 'All' },
+    { id: 2, value: 'Me' },
+  ];
+
   return (
     <div className="activeCardsContainer">
       <br />
