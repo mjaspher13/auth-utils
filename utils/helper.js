@@ -165,3 +165,14 @@ export const transformObjectKeysToString = (obj) => {
 export const transformObjectKeysToStringArray = (arr) => {
   return arr.map((obj) => transformObjectKeysToString(obj));
 };
+
+/**
+ * Utility function to filter an array based on the indices provided in a selection object.
+ *
+ * @param {Array} array - The array to be filtered.
+ * @param {Object} selectedIndices - The object with keys as indices and values as true.
+ * @returns {Array} - The filtered array containing only the elements at the selected indices.
+ */
+const filterArrayByIndices = (array, selectedIndices) => {
+  return array.filter((item, index) => selectedIndices.hasOwnProperty(index));
+};
