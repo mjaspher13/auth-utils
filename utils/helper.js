@@ -44,7 +44,7 @@ export const isEmpty = (value) => {
     (Array.isArray(value) && value.length === 0) ||
     (typeof value === "string" && value.trim().length === 0);
 };
-
+å;
 /**
  * Converts an object into a URL query string.
  * If the object contains nested objects or arrays, it will recursively convert them.
@@ -98,3 +98,38 @@ export const queryString = (obj, parentKey = "") => {
 export const cleanCurrency = (inputStr) => {
   return inputStr.replace(/[^\d.]/g, "");
 };
+
+/**
+ * Replaces null values in an object with a specified value.
+ *
+ * @param {Object} obj - The object to be modified.
+ * @param {*} replacement - The value to replace null with.
+ * @returns {Object} - The modified object.
+ */
+function replaceNullValues(obj, replacement) {
+  // Create a new object to avoid mutating the original object
+  let newObj = {};
+
+  // Iterate over the object properties
+  for (let key in obj) {
+    // Check if the current value is null
+    if (obj[key] === null) {
+      newObj[key] = replacement;
+    } else {
+      newObj[key] = obj[key];
+    }
+  }
+
+  return newObj;
+}
+
+/**
+ * Applies the replaceNullValues function to each object in an array.
+ *
+ * @param {Array} arr - The array of objects to be modified.
+ * @param {*} replacement - The value to replace null with.
+ * @returns {Array} - The array of modified objects.
+ */
+function replaceNullValuesInArray(arr, replacement) {
+  return arr.map((obj) => replaceNullValues(obj, replacement));
+}

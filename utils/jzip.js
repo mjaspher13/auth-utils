@@ -1,3 +1,5 @@
+// jzip.js
+
 /**
  * Utility function to create a ZIP local file header.
  * @param {string} filename - The name of the file.
