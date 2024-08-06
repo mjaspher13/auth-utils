@@ -133,3 +133,35 @@ function replaceNullValues(obj, replacement) {
 function replaceNullValuesInArray(arr, replacement) {
   return arr.map((obj) => replaceNullValues(obj, replacement));
 }
+
+/**
+ * Converts object keys to strings.
+ *
+ * @param {Object} obj - The object to be modified.
+ * @returns {Object} - The modified object with keys as strings.
+ */
+export const transformObjectKeysToString = (obj) => {
+  // Create a new object to avoid mutating the original object
+  let newObj = {};
+
+  // Iterate over the object properties
+  for (let key in obj) {
+    // Convert key to string
+    let stringKey = String(key);
+
+    // Copy the value to the new object
+    newObj[stringKey] = obj[key];
+  }
+
+  return newObj;
+};
+
+/**
+ * Applies the transformObjectKeysToString function to each object in an array.
+ *
+ * @param {Array} arr - The array of objects to be modified.
+ * @returns {Array} - The array of modified objects with keys as strings.
+ */
+export const transformObjectKeysToStringArray = (arr) => {
+  return arr.map((obj) => transformObjectKeysToString(obj));
+};
