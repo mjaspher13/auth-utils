@@ -106,7 +106,7 @@ export const cleanCurrency = (inputStr) => {
  * @param {*} replacement - The value to replace null with.
  * @returns {Object} - The modified object.
  */
-function replaceNullValues(obj, replacement) {
+export const replaceNullValues = (obj, replacement) => {
   // Create a new object to avoid mutating the original object
   let newObj = {};
 
@@ -121,7 +121,7 @@ function replaceNullValues(obj, replacement) {
   }
 
   return newObj;
-}
+};
 
 /**
  * Applies the replaceNullValues function to each object in an array.
@@ -130,9 +130,8 @@ function replaceNullValues(obj, replacement) {
  * @param {*} replacement - The value to replace null with.
  * @returns {Array} - The array of modified objects.
  */
-function replaceNullValuesInArray(arr, replacement) {
-  return arr.map((obj) => replaceNullValues(obj, replacement));
-}
+export const replaceNullValuesInArray = (arr, replacement) =>
+  arr.map((obj) => replaceNullValues(obj, replacement));
 
 /**
  * Converts object keys to strings.
@@ -162,9 +161,8 @@ export const transformObjectKeysToString = (obj) => {
  * @param {Array} arr - The array of objects to be modified.
  * @returns {Array} - The array of modified objects with keys as strings.
  */
-export const transformObjectKeysToStringArray = (arr) => {
-  return arr.map((obj) => transformObjectKeysToString(obj));
-};
+export const transformObjectKeysToStringArray = (arr) =>
+  arr.map((obj) => transformObjectKeysToString(obj));
 
 /**
  * Utility function to filter an array based on the indices provided in a selection object.
@@ -173,6 +171,23 @@ export const transformObjectKeysToStringArray = (arr) => {
  * @param {Object} selectedIndices - The object with keys as indices and values as true.
  * @returns {Array} - The filtered array containing only the elements at the selected indices.
  */
-const filterArrayByIndices = (array, selectedIndices) => {
-  return array.filter((item, index) => selectedIndices.hasOwnProperty(index));
+export const filterArrayByIndices = (array, selectedIndices) =>
+  array.filter((item, index) => selectedIndices.hasOwnProperty(index));
+
+/**
+ * Checks if any key in an object has a value of true.
+ *
+ * @param {Object} obj - The object to check.
+ * @returns {boolean} - Returns true if any key has a value of true, otherwise false.
+ */
+export const hasAnyKeyTrue = (obj) => {
+  // Loop through each key in the object
+  for (let key in obj) {
+    // Check if the current key's value is strictly equal to true
+    if (obj[key] === true) {
+      return true; // Return true immediately if found
+    }
+  }
+  // Return false if no key with true value was found
+  return false;
 };
