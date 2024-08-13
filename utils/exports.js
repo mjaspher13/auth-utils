@@ -75,13 +75,16 @@ export const handleExportCards = (records, props) => {
  */
 export function phoneNumberFormat(value) {
   // Remove all non-digit characters and limit to 10 digits
-  let input = value.replace(/\D/g, '').substring(0, 10);
+  let input = value.replace(/\D/g, "").substring(0, 10);
   const size = input.length;
 
   // Return formatted number based on its length
   if (size < 4) return input;
   if (size < 7) return `${input.substring(0, 3)} ${input.substring(3, 6)}`;
-  return `${input.substring(0, 3)} ${input.substring(3, 6)} ${input.substring(6, 10)}`;
+  return `${input.substring(0, 3)} ${input.substring(3, 6)} ${input.substring(
+    6,
+    10
+  )}`;
 }
 
 /**
@@ -91,7 +94,7 @@ export function phoneNumberFormat(value) {
  */
 export function viewPhoneNumber(value) {
   // Remove all non-digit characters
-  const digits = value.replace(/\D/g, '');
+  const digits = value.replace(/\D/g, "");
   // Extract the last 10 digits (local number)
   const last10 = digits.substr(-10);
   // Extract the country code
@@ -100,12 +103,38 @@ export function viewPhoneNumber(value) {
   // Combine country code and local number
   const input = `${countryCode} ${last10}`;
   // Split input into parts by space
-  const parts = input.trim().split(' ');
+  const parts = input.trim().split(" ");
 
   // Return the original input if it does not contain the expected parts
   if (parts.length < 2) return input;
 
   // Format the number into readable chunks
-  const formattedNumber = `${parts[0]} ${parts[1].slice(0, 3)} ${parts[1].slice(3, 6)} ${parts[1].slice(6)}`;
+  const formattedNumber = `${parts[0]} ${parts[1].slice(0, 3)} ${parts[1].slice(
+    3,
+    6
+  )} ${parts[1].slice(6)}`;
   return formattedNumber;
 }
+
+/**
+ * Auto-adjusts the column widths of an Excel worksheet based on the content.
+ *
+ * @param {Object} worksheet - The worksheet object to adjust.
+ * @param {Array[]} data - A 2D array where each inner array represents a row of data.
+ */
+const autoAdjustColumnWidth = (worksheet, data) => {
+  // Calculate the maximum width required for each column
+  const maxColumnWidths = data[0].map((_, colIndex) => {
+    return Math.max(
+      ...data.map((row) => {
+        // Get the cell content for the current column
+        const cell = row[colIndex];
+        // Determine the length of the cell content; default to 10 if empty
+        return cell ? cell.toString().length : 10;
+      })
+    );
+  });
+
+  // Apply the calculated widths to the worksheet columns
+  worksheet["!cols"] = maxColumnWidths.map((width) => ({ wch: width }));
+};
