@@ -118,23 +118,35 @@ export function viewPhoneNumber(value) {
 
 /**
  * Auto-adjusts the column widths of an Excel worksheet based on the content.
- *
+ * 
  * @param {Object} worksheet - The worksheet object to adjust.
- * @param {Array[]} data - A 2D array where each inner array represents a row of data.
+ * @param {Array<Object>} data - An array of objects where each object represents a row.
+ * @returns {Object} - The worksheet with adjusted column widths.
  */
 const autoAdjustColumnWidth = (worksheet, data) => {
+  if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object') {
+      throw new Error('Data should be an array of objects.');
+  }
+
+  // Extract the keys (headers) from the first object
+  const headers = Object.keys(data[0]);
+
   // Calculate the maximum width required for each column
-  const maxColumnWidths = data[0].map((_, colIndex) => {
-    return Math.max(
-      ...data.map((row) => {
-        // Get the cell content for the current column
-        const cell = row[colIndex];
-        // Determine the length of the cell content; default to 10 if empty
-        return cell ? cell.toString().length : 10;
-      })
-    );
+  const maxColumnWidths = headers.map(header => {
+      return Math.max(
+          header.length, // Start with the length of the header
+          ...data.map(row => {
+              // Get the cell content for the current column (header)
+              const cell = row[header];
+              // Determine the length of the cell content; default to 10 if empty
+              return cell ? cell.toString().length : 10;
+          })
+      );
   });
 
   // Apply the calculated widths to the worksheet columns
-  worksheet["!cols"] = maxColumnWidths.map((width) => ({ wch: width }));
+  worksheet['!cols'] = maxColumnWidths.map(width => ({ wch: width }));
+
+  // Return the modified worksheet
+  return worksheet;
 };
