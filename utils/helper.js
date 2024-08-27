@@ -191,3 +191,24 @@ export const hasAnyKeyTrue = (obj) => {
   // Return false if no key with true value was found
   return false;
 };
+
+/**
+ * Returns a set of keys from the input object that have true values.
+ *
+ * @param {Object} obj - The input object where the keys are integers and the values are booleans.
+ * @returns {Set} A set containing the keys that have true values in the input object.
+ */
+export const getTrueKeys = (obj) => {
+  // Create a new set to store the keys with true values
+  const trueKeys = new Set();
+
+  // Iterate through the object entries
+  for (const [key, value] of Object.entries(obj)) {
+      // If the value is true, add the key to the set
+      if (value) {
+          trueKeys.add(parseInt(key));
+      }
+  }
+
+  return trueKeys;
+}
