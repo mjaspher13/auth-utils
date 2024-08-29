@@ -224,3 +224,26 @@ export const getTrueKeys = (obj) => {
  */
 export const filterArrayBySelected = (arr, filterObj) =>
   arr.filter((_, index) => filterObj[index]);
+
+/**
+ * Filters an array of objects based on a selection object and retains only the specified keys in the objects.
+ *
+ * @param {Array} arr - The array of objects to be filtered.
+ * @param {Object} filterObj - The object containing the filter criteria, where keys are 0-based indices and values are booleans.
+ * @param {Array} keysToRetain - An array of keys to be retained in the filtered objects.
+ * @returns {Array} - A new array containing filtered objects with only the specified keys retained.
+ */
+export const filterAndRetainKeys = (arr, filterObj, keysToRetain) => {
+  return arr
+    .filter((_, index) => filterObj[index]) // Filter the array based on the selection object
+    .map((obj) => {
+      // Create a new object with only the specified keys retained
+      const newObj = {};
+      keysToRetain.forEach((key) => {
+        if (obj.hasOwnProperty(key)) {
+          newObj[key] = obj[key];
+        }
+      });
+      return newObj;
+    });
+};
