@@ -222,5 +222,5 @@ export const getTrueKeys = (obj) => {
  * @param {Object} filterObj - The object containing the filter criteria, where keys are 0-based indices and values are booleans.
  * @returns {Array} - A new array containing only the elements for which the filter object has a value of true.
  */
-export const filterArrayByObject = (arr, filterObj) =>
+export const filterArrayBySelected = (arr, filterObj) =>
   arr.filter((_, index) => filterObj[index]);
