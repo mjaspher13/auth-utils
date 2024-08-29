@@ -204,11 +204,23 @@ export const getTrueKeys = (obj) => {
 
   // Iterate through the object entries
   for (const [key, value] of Object.entries(obj)) {
-      // If the value is true, add the key to the set
-      if (value) {
-          trueKeys.add(parseInt(key));
-      }
+    // If the value is true, add the key to the set
+    if (value) {
+      trueKeys.add(parseInt(key));
+    }
   }
 
   return trueKeys;
-}
+};
+
+/**
+ * Filters an array based on a filter object.
+ * The filter object keys correspond to 0-based indices of the array.
+ * If the value for a given key is true, the corresponding array element is included in the result.
+ *
+ * @param {Array} arr - The array to be filtered.
+ * @param {Object} filterObj - The object containing the filter criteria, where keys are 0-based indices and values are booleans.
+ * @returns {Array} - A new array containing only the elements for which the filter object has a value of true.
+ */
+export const filterArrayByObject = (arr, filterObj) =>
+  arr.filter((_, index) => filterObj[index]);
