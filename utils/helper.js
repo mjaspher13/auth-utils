@@ -247,3 +247,39 @@ export const filterAndRetainKeys = (arr, filterObj, keysToRetain) => {
       return newObj;
     });
 };
+
+// Constants representing the columns that can be edited
+export const EDITABLE_COLUMNS = ["creditLimit", "validFrom", "validTo"];
+
+/**
+ * Function to update a specific row's data in the state.
+ *
+ * @param {number} rowIndex - The index of the row to be updated.
+ * @param {string} columnId - The ID of the column to be updated.
+ * @param {any} value - The new value to set in the specified column.
+ * @param {Object[]} rowSelected - The currently selected rows.
+ * @param {Function} setEditCards - The state setter function to update the row data.
+ */
+const updateMyData = (rowIndex, columnId, value, rowSelected, setEditCards) => {
+  // Debugging logs to verify the parameters
+  console.log("index", rowIndex);
+  console.log("column", columnId);
+  console.log("value", value);
+  console.log("rowSelection", rowSelected);
+
+  // Update the state with the new value for the specified row and column
+  setEditCards((old) =>
+    old.map((row, index) => {
+      // Check if the current row is the one to be updated
+      if (index === rowIndex) {
+        // Return the updated row with the new value for the specified column
+        return {
+          ...old[rowIndex],
+          [columnId]: value,
+        };
+      }
+      // Return the original row if it doesn't need to be updated
+      return row;
+    })
+  );
+};
