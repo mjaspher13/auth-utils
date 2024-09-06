@@ -1,0 +1,66 @@
+.tableHeaderbuttonStyle {
+  /* Common styles for the button */
+}
+
+.enabledClass {
+  color: black; /* Example of enabled style */
+  cursor: pointer;
+}
+
+.disabledClass {
+  color: gray; /* Example of disabled style */
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.table-toolbar-row {
+  #button-edit-button_usb-table_default--id {
+    background: #{$token-disabled-element-color} !important;
+    color: $token-text-color-secondary !important;
+    cursor: not-allowed !important;
+    border-color: $token-disabled-element-color !important;
+
+    .svg-icon {
+      color: $token-text-color-secondary !important;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      background: #{$token-disabled-element-color} !important;
+      color: $token-text-color-secondary !important;
+
+      .svg-icon {
+        color: $token-text-color-secondary !important;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      background: #{$token-disabled-element-color} !important;
+      color: $token-text-color-secondary !important;
+
+      &:hover {
+        background: #{$token-disabled-element-color} !important;
+        color: $token-text-color-secondary !important;
+      }
+
+      &:focus {
+        background: #{$token-disabled-element-color} !important;
+        color: $token-text-color-secondary !important;
+      }
+
+      &::before {
+        border-color: $token-border-transparent !important;
+      }
+    }
+  }
+
+  #button-hidebutton_usb-table_default--id {
+    display: none;
+  }
+
+  #button-cancel-button_usb-table_default--id {
+    display: block;
+    background-color: $token-background-brand-secondary-active;
+  }
+}
