@@ -5,7 +5,9 @@ const apiClient = (() => {
   const fetchWithInterceptors = (url, options = {}) => {
     const fullUrl = extractFullUrl(url, baseUrl);
     const authToken = userIdentityStorage.get("token")?.token;
-    const authHeader = authToken ? `Bearer ${authToken}` : `Basic ${BASIC_AUTH}`;
+    const authHeader = authToken
+      ? `Bearer ${authToken}`
+      : `Basic ${BASIC_AUTH}`;
 
     const modifiedOptions = {
       ...options,
@@ -36,6 +38,13 @@ const apiClient = (() => {
       fetchWithInterceptors(url, { method: "PUT", body }, params),
     delete: (url, params = {}) =>
       fetchWithInterceptors(url, { method: "DELETE" }, params),
+    /**
+     * Allows multiple requests to be made concurrently, similar to axios.all.
+     *
+     * @param {Array<Promise>} requests - An array of Promises representing the requests.
+     * @return {Promise<Array>} - A promise that resolves when all the requests complete.
+     */
+    all: (requests) => Promise.all(requests),
   };
 })();
 
