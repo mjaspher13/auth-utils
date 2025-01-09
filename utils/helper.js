@@ -285,13 +285,35 @@ const updateMyData = (rowIndex, columnId, value, rowSelected, setEditCards) => {
 };
 
 /**
- * Formats an expiration date string (MM/DD/YYYY) to display only the month and year.
+ * Formats an expiration date string (MM/DD/YYYY) into a credit card format (MM/YY).
+ * Handles invalid or empty inputs gracefully.
  * @param {string} dateString - The full expiration date (e.g., "03/31/2027").
- * @returns {string} The formatted expiration date (e.g., "03/2027").
+ * @returns {string} The formatted expiration date (e.g., "03/27") or an error message.
  */
-const formatExpirationDate = (dateString) => {
+export const formatCreditCardExpiration = (dateString) => {
+  // Guard clause: Check if input is empty or not a string
+  if (!dateString || typeof dateString !== "string") {
+    return "Invalid input: dateString must be a non-empty string";
+  }
+
   // Split the date string into components
-  const [month, , year] = dateString.split("/");
+  const parts = dateString.split("/");
+  
+  // Guard clause: Ensure input has the correct format (MM/DD/YYYY)
+  if (parts.length !== 3 || parts[0].length !== 2 || parts[2].length !== 4) {
+    return "Invalid input: dateString must be in MM/DD/YYYY format";
+  }
+
+  const [month, , year] = parts;
+
+  // Guard clause: Check if month and year are valid numbers
+  if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+    return "Invalid input: month must be between 01 and 12, and year must be valid";
+  }
+
+  // Extract the last two digits of the year
+  const shortYear = year.slice(-2);
+
   // Return formatted string
-  return `${month}/${year}`;
-}
+  return `${month}/${shortYear}`;
+};
