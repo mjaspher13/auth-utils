@@ -283,3 +283,15 @@ const updateMyData = (rowIndex, columnId, value, rowSelected, setEditCards) => {
     })
   );
 };
+
+/**
+ * Formats an expiration date string (MM/DD/YYYY) to display only the month and year.
+ * @param {string} dateString - The full expiration date (e.g., "03/31/2027").
+ * @returns {string} The formatted expiration date (e.g., "03/2027").
+ */
+const formatExpirationDate = (dateString) => {
+  // Split the date string into components
+  const [month, , year] = dateString.split("/");
+  // Return formatted string
+  return `${month}/${year}`;
+}
