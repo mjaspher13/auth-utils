@@ -298,7 +298,7 @@ export const formatCreditCardExpiration = (dateString) => {
 
   // Split the date string into components
   const parts = dateString.split("/");
-  
+
   // Guard clause: Ensure input has the correct format (MM/DD/YYYY)
   if (parts.length !== 3 || parts[0].length !== 2 || parts[2].length !== 4) {
     return "Invalid input: dateString must be in MM/DD/YYYY format";
@@ -316,4 +316,101 @@ export const formatCreditCardExpiration = (dateString) => {
 
   // Return formatted string
   return `${month}/${shortYear}`;
+};
+
+/**
+ * A centralized error code map for validation error handling.
+ * Provides clear error messages corresponding to specific validation failures.
+ */
+export const errorCodeMap = {
+  // Credit Limit Errors
+  101: "Credit limit is required.",
+  102: "Please enter a valid numeric value.",
+  103: "Credit limit must be between $1 and $9,999,999.",
+
+  // Valid From Date Errors
+  201: "Valid From date is required.",
+  202: "Please provide a valid date.",
+  203: "Valid From date must be within 30 days from today.",
+
+  // Valid To Date Errors
+  301: "Valid To date is required.",
+  302: "Please provide a valid date.",
+  303: "Valid To date must be after the Valid From date.",
+  304: "Valid To date must be within 365 days of the Valid From date.",
+};
+
+/**
+ * Validates the Credit Limit field.
+ * @param {string} value - The input value to validate.
+ * @returns {number} - Returns an error code (e.g., 101 for required, 0 for valid).
+ */
+export const validateCreditLimit = (value) => {
+  const numericValue = parseFloat(value.replace(/,/g, ""));
+
+  if (!value || value.trim() === "") {
+    return 101; // Credit limit is required
+  }
+  if (isNaN(numericValue)) {
+    return 102; // Invalid numeric value
+  }
+  if (numericValue < 1 || numericValue > 9999999) {
+    return 103; // Out of range
+  }
+
+  return 0; // Valid input
+};
+
+/**
+ * Validates the Valid From date field.
+ * @param {string} value - The input value to validate.
+ * @returns {number} - Returns an error code (e.g., 201 for required, 0 for valid).
+ */
+export const validateValidFrom = (value) => {
+  const currentDate = new Date();
+  const inputDate = new Date(value);
+
+  if (!value) {
+    return 201; // Valid From date is required
+  }
+  if (isNaN(inputDate.getTime())) {
+    return 202; // Invalid date format
+  }
+
+  const thirtyDaysFromNow = new Date(currentDate);
+  thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
+  if (inputDate < currentDate || inputDate > thirtyDaysFromNow) {
+    return 203; // Out of range
+  }
+
+  return 0; // Valid input
+};
+
+/**
+ * Validates the Valid To date field.
+ * @param {string} validFromValue - The Valid From date to compare against.
+ * @param {string} value - The input value to validate.
+ * @returns {number} - Returns an error code (e.g., 301 for required, 0 for valid).
+ */
+export const validateValidTo = (validFromValue, value) => {
+  const validFromDate = new Date(validFromValue);
+  const inputDate = new Date(value);
+
+  if (!value) {
+    return 301; // Valid To date is required
+  }
+  if (isNaN(inputDate.getTime())) {
+    return 302; // Invalid date format
+  }
+
+  const maxValidToDate = new Date(validFromDate);
+  maxValidToDate.setDate(validFromDate.getDate() + 365);
+  if (inputDate <= validFromDate) {
+    return 303; // Valid To must be after Valid From
+  }
+  if (inputDate > maxValidToDate) {
+    return 304; // Out of range
+  }
+
+  return 0; // Valid input
 };
