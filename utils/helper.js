@@ -362,54 +362,92 @@ export const validateCreditLimit = (value) => {
 };
 
 /**
- * Validates the Valid From date field.
+ * Validates the "Valid From" date field in MM/DD/YYYY format.
  * @param {string} value - The input value to validate.
  * @returns {number} - Returns an error code (e.g., 201 for required, 0 for valid).
  */
 export const validateValidFrom = (value) => {
   const currentDate = new Date();
-  const inputDate = new Date(value);
 
+  // Check if the value is empty
   if (!value) {
-    return 201; // Valid From date is required
-  }
-  if (isNaN(inputDate.getTime())) {
-    return 202; // Invalid date format
+      return 201; // Valid From is required
   }
 
+  // Check if the value matches the MM/DD/YYYY format
+  const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+  if (!dateRegex.test(value)) {
+      return 202; // Invalid date format
+  }
+
+  // Parse the date and check validity
+  const [month, day, year] = value.split('/').map(Number);
+  const inputDate = new Date(year, month - 1, day);
+
+  // Ensure the parsed date matches the input
+  if (
+      inputDate.getMonth() + 1 !== month ||
+      inputDate.getDate() !== day ||
+      inputDate.getFullYear() !== year
+  ) {
+      return 202; // Invalid date format
+  }
+
+  // Check if the date is within 30 days from today
   const thirtyDaysFromNow = new Date(currentDate);
   thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
+
   if (inputDate < currentDate || inputDate > thirtyDaysFromNow) {
-    return 203; // Out of range
+      return 203; // Out of range
   }
 
   return 0; // Valid input
 };
 
 /**
- * Validates the Valid To date field.
- * @param {string} validFromValue - The Valid From date to compare against.
+ * Validates the "Valid To" date field in MM/DD/YYYY format.
+ * @param {string} validFromValue - The "Valid From" date to compare against.
  * @param {string} value - The input value to validate.
  * @returns {number} - Returns an error code (e.g., 301 for required, 0 for valid).
  */
 export const validateValidTo = (validFromValue, value) => {
-  const validFromDate = new Date(validFromValue);
-  const inputDate = new Date(value);
-
+  // Check if the value is empty
   if (!value) {
-    return 301; // Valid To date is required
-  }
-  if (isNaN(inputDate.getTime())) {
-    return 302; // Invalid date format
+      return 301; // Valid To is required
   }
 
+  // Check if the value matches the MM/DD/YYYY format
+  const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+  if (!dateRegex.test(value)) {
+      return 302; // Invalid date format
+  }
+
+  // Parse the date and check validity
+  const [fromMonth, fromDay, fromYear] = validFromValue.split('/').map(Number);
+  const [month, day, year] = value.split('/').map(Number);
+  const validFromDate = new Date(fromYear, fromMonth - 1, fromDay);
+  const inputDate = new Date(year, month - 1, day);
+
+  // Ensure the parsed date matches the input
+  if (
+      inputDate.getMonth() + 1 !== month ||
+      inputDate.getDate() !== day ||
+      inputDate.getFullYear() !== year
+  ) {
+      return 302; // Invalid date format
+  }
+
+  // Ensure "Valid To" is after "Valid From"
+  if (inputDate <= validFromDate) {
+      return 303; // Must be after "Valid From"
+  }
+
+  // Ensure "Valid To" is within 365 days of "Valid From"
   const maxValidToDate = new Date(validFromDate);
   maxValidToDate.setDate(validFromDate.getDate() + 365);
-  if (inputDate <= validFromDate) {
-    return 303; // Valid To must be after Valid From
-  }
+
   if (inputDate > maxValidToDate) {
-    return 304; // Out of range
+      return 304; // Out of range
   }
 
   return 0; // Valid input
