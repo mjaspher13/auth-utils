@@ -324,17 +324,17 @@ export const formatCreditCardExpiration = (dateString) => {
  */
 export const errorCodeMap = {
   // Credit Limit Errors
-  101: "Credit limit is required.",
+  101: "Enter an amount between $1 and $9,999,999.",
   102: "Please enter a valid numeric value.",
   103: "Credit limit must be between $1 and $9,999,999.",
 
   // Valid From Date Errors
-  201: "Valid From date is required.",
+  201: "Choose a date within 30 days.",
   202: "Please provide a valid date.",
   203: "Valid From date must be within 30 days from today.",
 
   // Valid To Date Errors
-  301: "Valid To date is required.",
+  301: "Choose a date up to 365 days after the valid from date.",
   302: "Please provide a valid date.",
   303: "Valid To date must be after the Valid From date.",
   304: "Valid To date must be within 365 days of the Valid From date.",
