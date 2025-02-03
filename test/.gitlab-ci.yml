@@ -1,0 +1,21 @@
+image: maven:3.8.8-openjdk-11  # Maven with Java 11
+
+services:
+  - name: selenium/hub:4.8.0  # Selenium Grid Hub
+    alias: selenium-hub       # Alias for connecting tests
+  - name: selenium/node-chrome:4.8.0  # Chrome Node
+    alias: selenium-node-chrome
+    entrypoint: ["/opt/bin/entry_point.sh"]
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  SELENIUM_GRID_URL: "http://selenium-hub:4444/wd/hub"
+
+stages:
+  - test
+
+selenium_tests:
+  stage: test
+  script:
+    # Run Maven to execute TestNG tests
+    - mvn clean test
