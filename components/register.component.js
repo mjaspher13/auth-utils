@@ -9,8 +9,11 @@ import USBInput from '@usb-shield/react-forms-input-text';
 import USBButton from '@usb-shield/react-button';
 import { USBGrid, USBColumn } from '@usb-shield/react-grid';
 
+// Labels/content (unchanged)
 import RegisterLabels from '../../../templates/register.json';
 import ForgotLabels from '../../../templates/forgotpassword.json';
+// Optional modal (keep if you already have this component)
+import RegisterModel from '../../register/terms-and-conditions-model/modal';
 
 import {
   registerFlowFlag,
@@ -27,7 +30,7 @@ const RegisterPage = ({ appType }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Keep PII (email) out of React/Redux state
+  // Keep PII out of React/Redux state
   const emailRef = useRef(null);
 
   // Derived UI state only
@@ -36,18 +39,18 @@ const RegisterPage = ({ appType }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
+  // Route-based flow (same as before)
   const pathname = window.location.pathname;
   const isRegister = pathname === '/register';
   const labels = isRegister ? RegisterLabels : ForgotLabels;
 
-  // --- Validation ---
+  // ---- Validation ----
   const validateEmail = useCallback((email) => {
     if (!email || email.trim() === '') return 225; // required
     if (!isEmail(email)) return 224;               // invalid format
     return 0;
   }, []);
 
-  // Keep input/validation tight and side-effect free
   const readAndValidate = useCallback(() => {
     const value = emailRef.current?.value?.trim() || '';
     const code = validateEmail(value);
@@ -55,11 +58,11 @@ const RegisterPage = ({ appType }) => {
     return { value, code };
   }, [validateEmail]);
 
-  // --- Handlers ---
+  // ---- Actions ----
   const handleContinue = useCallback(async () => {
     const { value: email, code } = readAndValidate();
     setAttempts((n) => n + 1);
-    if (code !== 0) return;
+    if (code !== 0) return; // block further action
 
     dispatch(registerFlowFlag(true));
     setIsSubmitting(true);
@@ -91,11 +94,11 @@ const RegisterPage = ({ appType }) => {
   }, [dispatch, readAndValidate, navigate]);
 
   const handleCancel = useCallback(() => {
-    dispatch(resetPasswordResponseObj({})); // clear any reset state like before
+    dispatch(resetPasswordResponseObj({})); // preserve original behavior
     navigate('/login');
   }, [dispatch, navigate]);
 
-  // USBInput mates: keep dynamic updates but never store raw email in Redux
+  // Same error copy you used before
   const errorMessages = {
     224: 'Email not found. Please re-enter.',
     225: 'Email is required.',
@@ -122,13 +125,12 @@ const RegisterPage = ({ appType }) => {
             autoComplete="email"
             callbackFrequency="dynamic"
             errorMessages={errorMessages}
-            // Keep validation responsive, still no PII in state
+            // keep dynamic validation without storing PII
             statusUpdateCallback={() => {
               const email = emailRef.current?.value ?? '';
               setErrorCode(validateEmail(email));
             }}
             filteringFunction={(inputValue) => {
-              // Do not mutate; just return pair: [value, code]
               const code = validateEmail(inputValue);
               return [inputValue, code];
             }}
@@ -173,14 +175,10 @@ const RegisterPage = ({ appType }) => {
         </USBColumn>
       </USBGrid>
 
-      {/* If you have a Register modal component, keep it here */}
-      {showRegisterModal && (
-        // Replace with your actual modal; prop names shown as example
-        <RegisterLabels.Modal
-          isOpen={showRegisterModal}
-          onClose={() => setShowRegisterModal(false)}
-        />
-      )}
+      {/* Keep your modal if used in the register flow */}
+      {showRegisterModal && RegisterModel ? (
+        <RegisterModel isOpen={showRegisterModal} onClose={() => setShowRegisterModal(false)} />
+      ) : null}
     </div>
   );
 };
